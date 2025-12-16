@@ -84,7 +84,7 @@ app.post('/submit', async (c) => {
   
   const validation = SubmissionSchema.safeParse(body);
   if (!validation.success) {
-    return c.json({ error: 'Validation failed', details: validation.error.errors }, 400);
+    return c.json({ error: 'Validation failed', details: validation.error.issues }, 400);
   }
   
   const { bilibiliUid, youtubeChannelId, submitterEmail, notes } = validation.data;

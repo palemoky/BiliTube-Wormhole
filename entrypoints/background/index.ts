@@ -1,4 +1,4 @@
-/// <reference types="wxt/client" />
+/// <reference types="wxt/browser" />
 
 export default defineBackground(() => {
   console.log('BiliTube-Wormhole: Background service worker started');

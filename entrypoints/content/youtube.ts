@@ -1,4 +1,4 @@
-/// <reference types="wxt/client" />
+/// <reference types="wxt/browser" />
 
 import { mappingClient } from '@/utils/mapping-client';
 import type { BilibiliDanmaku } from '../../types';
