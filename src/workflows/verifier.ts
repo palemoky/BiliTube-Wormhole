@@ -109,7 +109,7 @@ export class UserVerifier {
 
       const metadata: VerificationMetadata = {
         bilibiliFollowers: biliUser.follower,
-        youtubeSubscribers: ytChannel.subscriberCount,
+        ...(ytChannel.subscriberCount !== undefined && { youtubeSubscribers: ytChannel.subscriberCount }),
       };
 
       // Level 1: YouTube verified + name match

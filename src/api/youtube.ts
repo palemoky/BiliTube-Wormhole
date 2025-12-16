@@ -184,7 +184,7 @@ export class YouTubeAPI {
     try {
       const channel = await this.getChannel(channelId);
       return channel.verified || false;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }

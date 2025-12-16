@@ -98,6 +98,11 @@ export class BilibiliAPI {
   async getUserInfo(uid: string): Promise<BilibiliUser> {
     const data = await this.request<any>(`${this.baseUrl}/x/space/acc/info`, { mid: uid });
     
+    const official = data.official?.type >= 0 ? {
+      type: data.official.type,
+      desc: data.official.desc,
+    } : undefined;
+    
     return {
       uid: data.mid.toString(),
       name: data.name,
@@ -105,10 +110,7 @@ export class BilibiliAPI {
       sign: data.sign,
       follower: data.follower,
       level: data.level,
-      official: data.official?.type >= 0 ? {
-        type: data.official.type,
-        desc: data.official.desc,
-      } : undefined,
+      ...(official && { official }),
     };
   }
 

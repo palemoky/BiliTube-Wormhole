@@ -112,7 +112,7 @@ export default defineContentScript({
 
     // Render danmaku item (currently unused - placeholder for future implementation)
     // @ts-expect-error - Function will be used when danmaku rendering is implemented
-    function renderDanmaku(danmaku: BilibiliDanmaku, container: HTMLElement, _videoWidth: number, videoHeight: number) {
+    function _renderDanmaku(danmaku: BilibiliDanmaku, container: HTMLElement, _videoWidth: number, videoHeight: number) {
       const item = document.createElement('div');
       item.className = 'bilitube-danmaku-item';
       item.textContent = danmaku.content;
@@ -219,7 +219,6 @@ export default defineContentScript({
     }
 
     // Load and display danmaku (placeholder for future implementation)
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async function loadDanmaku(_biliUid: string, _youtubeVideoId: string) {
       try {
         injectStyles();

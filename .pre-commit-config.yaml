@@ -4,7 +4,7 @@
 repos:
   # Built-in hooks
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       # File checks
       - id: check-added-large-files
@@ -35,18 +35,18 @@ repos:
       # Prettier - Code formatting
       - id: prettier
         name: Prettier
-        entry: bun run format
+        entry: bun x prettier --write
         language: system
         types_or: [javascript, jsx, ts, tsx, json, yaml, markdown]
-        pass_filenames: false
+        pass_filenames: true
 
       # ESLint - Linting
       - id: eslint
         name: ESLint
-        entry: bun run lint --fix
+        entry: bun x eslint --fix
         language: system
         types: [ts, tsx]
-        pass_filenames: false
+        pass_filenames: true
 
       # TypeScript - Type checking
       - id: typescript-check
@@ -55,6 +55,7 @@ repos:
         language: system
         types: [ts, tsx]
         pass_filenames: false
+        stages: [push] # Only run on push, not commit
 
       # Tests - Run on push only
       - id: test-run

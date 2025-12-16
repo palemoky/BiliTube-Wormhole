@@ -78,7 +78,7 @@ app.post('/submit', async (c) => {
   let body;
   try {
     body = await c.req.json();
-  } catch (error) {
+  } catch (_error) {
     return c.json({ error: 'Invalid JSON' }, 400);
   }
   

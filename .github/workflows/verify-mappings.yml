@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       users:
-        description: "JSON array of users to verify"
+        description: 'JSON array of users to verify'
         required: true
         type: string
   issues:
@@ -13,6 +13,10 @@ on:
 permissions:
   contents: write
   issues: write
+
+concurrency:
+  group: verify-mappings-${{ github.event_name == 'issues' && github.event.issue.number || 'dispatch' }}
+  cancel-in-progress: false
 
 jobs:
   verify:
@@ -31,6 +35,14 @@ jobs:
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
+
+      - name: Cache Bun dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
 
       - name: Install dependencies
         run: bun install
