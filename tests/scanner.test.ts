@@ -63,8 +63,22 @@ describe('UserScanner', () => {
         {
           type: 'hot',
           users: [
-            { uid: '111', name: 'User1', face: 'avatar1.jpg', sign: 'bio1', follower: 10000, level: 6 },
-            { uid: '222', name: 'User2', face: 'avatar2.jpg', sign: 'bio2', follower: 20000, level: 6 },
+            {
+              uid: '111',
+              name: 'User1',
+              face: 'avatar1.jpg',
+              sign: 'bio1',
+              follower: 10000,
+              level: 6,
+            },
+            {
+              uid: '222',
+              name: 'User2',
+              face: 'avatar2.jpg',
+              sign: 'bio2',
+              follower: 20000,
+              level: 6,
+            },
           ],
           scannedAt: '2024-01-01T00:00:00.000Z',
           totalScanned: 2,
@@ -73,8 +87,22 @@ describe('UserScanner', () => {
         {
           type: 'must-watch',
           users: [
-            { uid: '111', name: 'User1', face: 'avatar1.jpg', sign: 'bio1', follower: 10000, level: 6 }, // duplicate
-            { uid: '333', name: 'User3', face: 'avatar3.jpg', sign: 'bio3', follower: 30000, level: 6 },
+            {
+              uid: '111',
+              name: 'User1',
+              face: 'avatar1.jpg',
+              sign: 'bio1',
+              follower: 10000,
+              level: 6,
+            }, // duplicate
+            {
+              uid: '333',
+              name: 'User3',
+              face: 'avatar3.jpg',
+              sign: 'bio3',
+              follower: 30000,
+              level: 6,
+            },
           ],
           scannedAt: '2024-01-01T00:00:00.000Z',
           totalScanned: 2,
@@ -96,7 +124,11 @@ describe('UserScanner', () => {
 
   describe('runDailyScan', () => {
     test('should scan hot rankings when not cold start', async () => {
-      const results = await scanner.runDailyScan({ coldStart: false, maxUsers: 100, delayMs: 1000 });
+      const results = await scanner.runDailyScan({
+        coldStart: false,
+        maxUsers: 100,
+        delayMs: 1000,
+      });
 
       expect(Array.isArray(results)).toBe(true);
       expect(results.length).toBeGreaterThan(0);

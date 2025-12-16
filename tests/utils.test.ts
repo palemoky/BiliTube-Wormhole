@@ -8,11 +8,11 @@ describe('String Similarity', () => {
   function stringSimilarity(str1: string, str2: string): number {
     const len1 = str1.length;
     const len2 = str2.length;
-    
+
     // Handle empty strings
     if (len1 === 0 && len2 === 0) return 1.0;
     if (len1 === 0 || len2 === 0) return 0;
-    
+
     const matrix: number[][] = [];
 
     for (let i = 0; i <= len1; i++) {
@@ -34,12 +34,14 @@ describe('String Similarity', () => {
         const diagCell = prevRow?.[j - 1];
         const prevRowCell = prevRow?.[j];
 
-        if (currRow && prevRow && prevCell !== undefined && diagCell !== undefined && prevRowCell !== undefined) {
-          currRow[j] = Math.min(
-            prevRowCell + 1,
-            prevCell + 1,
-            diagCell + cost
-          );
+        if (
+          currRow &&
+          prevRow &&
+          prevCell !== undefined &&
+          diagCell !== undefined &&
+          prevRowCell !== undefined
+        ) {
+          currRow[j] = Math.min(prevRowCell + 1, prevCell + 1, diagCell + cost);
         }
       }
     }
@@ -70,7 +72,7 @@ describe('String Similarity', () => {
   test('should handle empty strings', () => {
     // Two empty strings are identical
     expect(stringSimilarity('', '')).toBe(1.0);
-    
+
     // Empty string vs non-empty should be 0
     expect(stringSimilarity('test', '')).toBe(0);
     expect(stringSimilarity('', 'test')).toBe(0);
@@ -126,24 +128,20 @@ describe('Username Normalization', () => {
  * Bio matching tests
  */
 describe('Bio Matching', () => {
-  function checkBioMatch(biliSign: string, ytDescription: string, biliUid: string, ytChannelId: string): boolean {
+  function checkBioMatch(
+    biliSign: string,
+    ytDescription: string,
+    biliUid: string,
+    ytChannelId: string
+  ): boolean {
     const biliLower = biliSign.toLowerCase();
     const ytLower = ytDescription.toLowerCase();
 
-    const ytPatterns = [
-      ytChannelId.toLowerCase(),
-      'youtube.com',
-      'youtu.be',
-    ];
+    const ytPatterns = [ytChannelId.toLowerCase(), 'youtube.com', 'youtu.be'];
 
     const biliMentionsYt = ytPatterns.some(pattern => biliLower.includes(pattern));
 
-    const biliPatterns = [
-      biliUid,
-      'bilibili.com',
-      'b站',
-      'b站空间',
-    ];
+    const biliPatterns = [biliUid, 'bilibili.com', 'b站', 'b站空间'];
 
     const ytMentionsBili = biliPatterns.some(pattern => ytLower.includes(pattern));
 
@@ -191,22 +189,12 @@ describe('Bio Matching', () => {
   });
 
   test('should match when YouTube description mentions B站', () => {
-    const result = checkBioMatch(
-      'Regular bio',
-      '欢迎来B站找我',
-      '123456',
-      'UCtest'
-    );
+    const result = checkBioMatch('Regular bio', '欢迎来B站找我', '123456', 'UCtest');
     expect(result).toBe(true);
   });
 
   test('should not match when no mentions exist', () => {
-    const result = checkBioMatch(
-      'Regular bio',
-      'Regular description',
-      '123456',
-      'UCtest'
-    );
+    const result = checkBioMatch('Regular bio', 'Regular description', '123456', 'UCtest');
     expect(result).toBe(false);
   });
 

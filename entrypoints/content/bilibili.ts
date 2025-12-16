@@ -69,7 +69,7 @@ export default defineContentScript({
         const mapping = await mappingClient.getMappingByBiliUid(uid);
         if (mapping) {
           console.log('Found YouTube mapping:', mapping);
-          
+
           // Remove existing logo if any
           const existing = document.querySelector('.bilitube-youtube-link');
           if (existing) {

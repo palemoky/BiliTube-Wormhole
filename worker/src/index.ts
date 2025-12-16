@@ -29,9 +29,9 @@ interface RateLimitData {
 async function checkRateLimit(env: any, ip: string): Promise<boolean> {
   const key = `ratelimit:${ip}`;
   const now = Date.now();
-  
-  const data = await env.RATE_LIMIT_KV.get(key, 'json') as RateLimitData | null;
-  
+
+  const data = (await env.RATE_LIMIT_KV.get(key, 'json')) as RateLimitData | null;
+
   if (!data || now > data.resetAt) {
     // Reset rate limit
     await env.RATE_LIMIT_KV.put(
@@ -41,39 +41,39 @@ async function checkRateLimit(env: any, ip: string): Promise<boolean> {
     );
     return true;
   }
-  
+
   if (data.count >= 10) {
     return false;
   }
-  
+
   // Increment count
   await env.RATE_LIMIT_KV.put(
     key,
     JSON.stringify({ count: data.count + 1, resetAt: data.resetAt }),
     { expirationTtl: Math.floor((data.resetAt - now) / 1000) }
   );
-  
+
   return true;
 }
 
 // Health check
-app.get('/', (c) => {
+app.get('/', c => {
   return c.json({ status: 'ok', service: 'BiliTube-Wormhole Submission API' });
 });
 
 // Submit mapping
-app.post('/submit', async (c) => {
+app.post('/submit', async c => {
   const env = c.env as any;
-  
+
   // Get client IP
   const ip = c.req.header('CF-Connecting-IP') || c.req.header('X-Real-IP') || 'unknown';
-  
+
   // Check rate limit
   const allowed = await checkRateLimit(env, ip);
   if (!allowed) {
     return c.json({ error: 'Rate limit exceeded. Please try again later.' }, 429);
   }
-  
+
   // Parse and validate request
   let body;
   try {
@@ -81,18 +81,18 @@ app.post('/submit', async (c) => {
   } catch (_error) {
     return c.json({ error: 'Invalid JSON' }, 400);
   }
-  
+
   const validation = SubmissionSchema.safeParse(body);
   if (!validation.success) {
     return c.json({ error: 'Validation failed', details: validation.error.issues }, 400);
   }
-  
+
   const { bilibiliUid, youtubeChannelId, submitterEmail, notes } = validation.data;
-  
+
   // Create GitHub issue
   try {
     const octokit = new Octokit({ auth: env.GITHUB_TOKEN });
-    
+
     const issueBody = `
 ## User Mapping Submission
 
@@ -108,7 +108,7 @@ ${notes ? `### Notes\n${notes}` : ''}
 *This issue was automatically created by the BiliTube-Wormhole submission system.*
 *The verification workflow will run automatically to validate this mapping.*
     `.trim();
-    
+
     const issue = await octokit.rest.issues.create({
       owner: env.GITHUB_OWNER,
       repo: env.GITHUB_REPO,
@@ -116,7 +116,7 @@ ${notes ? `### Notes\n${notes}` : ''}
       body: issueBody,
       labels: ['user-mapping', 'pending-verification'],
     });
-    
+
     return c.json({
       success: true,
       message: 'Submission received. Verification will be processed automatically.',

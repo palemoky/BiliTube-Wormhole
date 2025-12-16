@@ -17,18 +17,18 @@ export class YouTubeAPI {
   private async request<T>(endpoint: string, params: Record<string, any> = {}): Promise<T> {
     const url = new URL(`${this.baseUrl}/${endpoint}`);
     url.searchParams.append('key', this.apiKey);
-    
+
     for (const [key, value] of Object.entries(params)) {
       url.searchParams.append(key, value.toString());
     }
-    
+
     const response = await fetch(url.toString());
     const data = await response.json();
-    
+
     if (data.error) {
       throw new Error(`YouTube API error: ${data.error.message}`);
     }
-    
+
     return data as T;
   }
 
@@ -40,13 +40,13 @@ export class YouTubeAPI {
       part: 'snippet,statistics,status',
       id: channelId,
     });
-    
+
     if (!data.items || data.items.length === 0) {
       throw new Error(`Channel not found: ${channelId}`);
     }
-    
+
     const item = data.items[0];
-    
+
     return {
       id: item.id,
       title: item.snippet.title,
@@ -73,9 +73,9 @@ export class YouTubeAPI {
       q: query,
       maxResults,
     });
-    
+
     const channelIds = data.items.map((item: any) => item.id.channelId);
-    
+
     // Get full channel details
     const channels: YouTubeChannel[] = [];
     for (const channelId of channelIds) {
@@ -86,7 +86,7 @@ export class YouTubeAPI {
         console.error(`Failed to get channel ${channelId}:`, error);
       }
     }
-    
+
     return channels;
   }
 
@@ -101,7 +101,7 @@ export class YouTubeAPI {
       order: 'date',
       maxResults,
     });
-    
+
     return data.items.map((item: any) => ({
       id: item.id.videoId,
       title: item.snippet.title,
@@ -127,13 +127,13 @@ export class YouTubeAPI {
       part: 'snippet,contentDetails,statistics',
       id: videoId,
     });
-    
+
     if (!data.items || data.items.length === 0) {
       throw new Error(`Video not found: ${videoId}`);
     }
-    
+
     const item = data.items[0];
-    
+
     return {
       id: item.id,
       title: item.snippet.title,
@@ -162,7 +162,7 @@ export class YouTubeAPI {
         maxResults,
         order: 'time',
       });
-      
+
       return data.items.map((item: any) => ({
         id: item.id,
         text: item.snippet.topLevelComment.snippet.textDisplay,
@@ -213,7 +213,7 @@ export class QuotaManager {
       videos: 1,
       comments: 1,
     };
-    
+
     this.usedQuota += costs[operation];
     this.checkReset();
   }
@@ -223,14 +223,14 @@ export class QuotaManager {
    */
   hasQuota(operation: 'search' | 'channels' | 'videos' | 'comments'): boolean {
     this.checkReset();
-    
+
     const costs = {
       search: 100,
       channels: 1,
       videos: 1,
       comments: 1,
     };
-    
+
     return this.usedQuota + costs[operation] <= this.dailyLimit;
   }
 
@@ -248,7 +248,7 @@ export class QuotaManager {
   private checkReset(): void {
     const now = new Date();
     const hoursSinceReset = (now.getTime() - this.lastReset.getTime()) / (1000 * 60 * 60);
-    
+
     if (hoursSinceReset >= 24) {
       this.usedQuota = 0;
       this.lastReset = now;

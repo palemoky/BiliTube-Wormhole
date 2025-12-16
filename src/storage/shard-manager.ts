@@ -96,7 +96,7 @@ export class ShardManager {
     try {
       // Ensure directory exists
       await Bun.write(dirPath + '/.gitkeep', '');
-      
+
       // Write mapping
       await Bun.write(filePath, JSON.stringify(mapping, null, 2));
     } catch (error) {
@@ -140,7 +140,7 @@ export class ShardManager {
       try {
         const file = Bun.file(`${this.baseDir}/${filePath}`);
         const mapping = (await file.json()) as UserMapping;
-        
+
         // Add both directions to index
         index[mapping.bilibiliUid] = filePath;
         index[mapping.youtubeChannelId] = filePath;

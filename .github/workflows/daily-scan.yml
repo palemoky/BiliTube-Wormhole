@@ -62,7 +62,7 @@ jobs:
 
             if (results.uniqueUsers.length > 0) {
               console.log(`Triggering verification for ${results.uniqueUsers.length} users`);
-              
+
               await github.rest.actions.createWorkflowDispatch({
                 owner: context.repo.owner,
                 repo: context.repo.repo,

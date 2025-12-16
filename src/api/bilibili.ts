@@ -24,13 +24,13 @@ export class BilibiliAPI {
 
     const response = await fetch('https://api.bilibili.com/x/web-interface/nav');
     const data = await response.json();
-    
+
     const imgUrl = data.data.wbi_img.img_url;
     const subUrl = data.data.wbi_img.sub_url;
-    
+
     const imgKey = imgUrl.split('/').pop().split('.')[0];
     const subKey = subUrl.split('/').pop().split('.')[0];
-    
+
     this.wbiKeys = { imgKey, subKey };
     return this.wbiKeys;
   }
@@ -41,16 +41,16 @@ export class BilibiliAPI {
   private async signWbi(params: Record<string, any>): Promise<string> {
     const { imgKey, subKey } = await this.getWbiKeys();
     const mixinKey = (imgKey + subKey).slice(0, 32);
-    
+
     const sortedParams = Object.keys(params)
       .sort()
       .map(key => `${key}=${encodeURIComponent(params[key])}`)
       .join('&');
-    
+
     const wts = Math.floor(Date.now() / 1000);
     const toSign = `${sortedParams}&wts=${wts}${mixinKey}`;
     const wRid = crypto.createHash('md5').update(toSign).digest('hex');
-    
+
     return `${sortedParams}&wts=${wts}&w_rid=${wRid}`;
   }
 
@@ -60,7 +60,7 @@ export class BilibiliAPI {
    */
   private async request<T>(url: string, params: Record<string, any> = {}): Promise<T> {
     let fullUrl: string;
-    
+
     // Only use WBI signature if SESSDATA is available
     if (this.sessdata) {
       const signedParams = await this.signWbi(params);
@@ -72,23 +72,23 @@ export class BilibiliAPI {
         .join('&');
       fullUrl = queryParams ? `${url}?${queryParams}` : url;
     }
-    
+
     const headers: HeadersInit = {
       'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-      'Referer': 'https://www.bilibili.com',
+      Referer: 'https://www.bilibili.com',
     };
-    
+
     if (this.sessdata) {
       headers['Cookie'] = `SESSDATA=${this.sessdata}`;
     }
-    
+
     const response = await fetch(fullUrl, { headers });
     const data = await response.json();
-    
+
     if (data.code !== 0) {
       throw new Error(`Bilibili API error: ${data.message}`);
     }
-    
+
     return data.data as T;
   }
 
@@ -97,12 +97,15 @@ export class BilibiliAPI {
    */
   async getUserInfo(uid: string): Promise<BilibiliUser> {
     const data = await this.request<any>(`${this.baseUrl}/x/space/acc/info`, { mid: uid });
-    
-    const official = data.official?.type >= 0 ? {
-      type: data.official.type,
-      desc: data.official.desc,
-    } : undefined;
-    
+
+    const official =
+      data.official?.type >= 0
+        ? {
+            type: data.official.type,
+            desc: data.official.desc,
+          }
+        : undefined;
+
     return {
       uid: data.mid.toString(),
       name: data.name,
@@ -117,13 +120,17 @@ export class BilibiliAPI {
   /**
    * Get user's video list
    */
-  async getUserVideos(uid: string, page: number = 1, pageSize: number = 30): Promise<BilibiliVideo[]> {
+  async getUserVideos(
+    uid: string,
+    page: number = 1,
+    pageSize: number = 30
+  ): Promise<BilibiliVideo[]> {
     const data = await this.request<any>(`${this.baseUrl}/x/space/arc/search`, {
       mid: uid,
       ps: pageSize,
       pn: page,
     });
-    
+
     return data.list.vlist.map((v: any) => ({
       bvid: v.bvid,
       aid: v.aid,
@@ -145,18 +152,18 @@ export class BilibiliAPI {
     const url = `https://api.bilibili.com/x/v1/dm/list.so?oid=${cid}`;
     const response = await fetch(url);
     const xml = await response.text();
-    
+
     // Parse XML danmaku
     const danmakuList: BilibiliDanmaku[] = [];
     const regex = /<d p="([^"]+)">([^<]+)<\/d>/g;
     let match;
-    
+
     while ((match = regex.exec(xml)) !== null) {
       const params = match[1]?.split(',');
       const content = match[2];
-      
+
       if (!params || params.length < 8) continue;
-      
+
       danmakuList.push({
         time: parseFloat(params[0] || '0'),
         type: parseInt(params[1] || '1') as 1 | 4 | 5,
@@ -169,7 +176,7 @@ export class BilibiliAPI {
         content: content || '',
       });
     }
-    
+
     return danmakuList;
   }
 
@@ -187,14 +194,14 @@ export class BilibiliAPI {
   async getHotRankings(): Promise<BilibiliUser[]> {
     const response = await fetch('https://api.bilibili.com/x/web-interface/ranking/v2');
     const data = await response.json();
-    
+
     if (data.code !== 0) {
       throw new Error(`Failed to get hot rankings: ${data.message}`);
     }
-    
+
     const users: BilibiliUser[] = [];
     const seenUids = new Set<string>();
-    
+
     for (const item of data.data.list) {
       const uid = item.owner.mid.toString();
       if (!seenUids.has(uid)) {
@@ -209,7 +216,7 @@ export class BilibiliAPI {
         });
       }
     }
-    
+
     return users;
   }
 
@@ -219,14 +226,14 @@ export class BilibiliAPI {
   async getMustWatchList(): Promise<BilibiliUser[]> {
     const response = await fetch('https://api.bilibili.com/x/web-interface/popular/precious');
     const data = await response.json();
-    
+
     if (data.code !== 0) {
       throw new Error(`Failed to get must-watch list: ${data.message}`);
     }
-    
+
     const users: BilibiliUser[] = [];
     const seenUids = new Set<string>();
-    
+
     for (const item of data.data.list) {
       const uid = item.owner.mid.toString();
       if (!seenUids.has(uid)) {
@@ -241,7 +248,7 @@ export class BilibiliAPI {
         });
       }
     }
-    
+
     return users;
   }
 
@@ -254,7 +261,7 @@ export class BilibiliAPI {
       keyword,
       page,
     });
-    
+
     return data.result.map((u: any) => ({
       uid: u.mid.toString(),
       name: u.uname,
@@ -262,10 +269,13 @@ export class BilibiliAPI {
       sign: u.usign,
       follower: u.fans,
       level: u.level,
-      official: u.official_verify?.type >= 0 ? {
-        type: u.official_verify.type,
-        desc: u.official_verify.desc,
-      } : undefined,
+      official:
+        u.official_verify?.type >= 0
+          ? {
+              type: u.official_verify.type,
+              desc: u.official_verify.desc,
+            }
+          : undefined,
     }));
   }
 
@@ -302,7 +312,7 @@ export class RateLimiter {
           reject(error);
         }
       });
-      
+
       if (!this.processing) {
         this.process();
       }
@@ -311,7 +321,7 @@ export class RateLimiter {
 
   private async process() {
     this.processing = true;
-    
+
     while (this.queue.length > 0) {
       const fn = this.queue.shift();
       if (fn) {
@@ -319,7 +329,7 @@ export class RateLimiter {
         await new Promise(resolve => setTimeout(resolve, this.delayMs));
       }
     }
-    
+
     this.processing = false;
   }
 }

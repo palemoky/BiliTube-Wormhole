@@ -61,7 +61,7 @@ jobs:
             # Extract Bilibili UID and YouTube Channel ID from issue
             BILI_UID=$(echo "$BODY" | grep -oP 'Bilibili UID:\s*\K\d+' || echo "")
             YT_ID=$(echo "$BODY" | grep -oP 'YouTube Channel ID:\s*\KUC[\w-]+' || echo "")
-            
+
             if [ -n "$BILI_UID" ] && [ -n "$YT_ID" ]; then
               echo "users=[{\"uid\":\"$BILI_UID\",\"ytChannelId\":\"$YT_ID\",\"issueNumber\":${{ github.event.issue.number }}}]" >> $GITHUB_OUTPUT
             else
@@ -102,25 +102,25 @@ jobs:
             for (const result of results) {
               if (result.issueNumber) {
                 const labels = result.success ? ['verified'] : ['manual-review'];
-                
+
                 await github.rest.issues.addLabels({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   issue_number: result.issueNumber,
                   labels: labels
                 });
-                
+
                 const comment = result.success
                   ? `✅ Verification successful!\n\n**Confidence Level**: ${result.level}\n**Confidence Score**: ${(result.confidence * 100).toFixed(1)}%\n\n**Reasons**:\n${result.reasons.map(r => `- ${r}`).join('\n')}`
                   : `⚠️ Automatic verification failed. Manual review required.\n\n**Reasons**:\n${result.reasons.map(r => `- ${r}`).join('\n')}`;
-                
+
                 await github.rest.issues.createComment({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   issue_number: result.issueNumber,
                   body: comment
                 });
-                
+
                 if (result.success) {
                   await github.rest.issues.update({
                     owner: context.repo.owner,

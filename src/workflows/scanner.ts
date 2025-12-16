@@ -22,7 +22,7 @@ export class UserScanner {
   async isColdStart(): Promise<boolean> {
     const b2yIndex = await this.shardManagers.b2y.readIndex();
     const y2bIndex = await this.shardManagers.y2b.readIndex();
-    
+
     return !b2yIndex && !y2bIndex;
   }
 
@@ -31,10 +31,10 @@ export class UserScanner {
    */
   async scanMustWatchList(): Promise<ScanResult> {
     console.log('Scanning must-watch list...');
-    
+
     const users = await this.rateLimiter.execute(() => this.biliApi.getMustWatchList());
     const newUsers = await this.filterNewUsers(users);
-    
+
     return {
       type: 'must-watch',
       users: newUsers,
@@ -49,10 +49,10 @@ export class UserScanner {
    */
   async scanHotRankings(): Promise<ScanResult> {
     console.log('Scanning hot rankings...');
-    
+
     const users = await this.rateLimiter.execute(() => this.biliApi.getHotRankings());
     const newUsers = await this.filterNewUsers(users);
-    
+
     return {
       type: 'hot',
       users: newUsers,
@@ -67,10 +67,10 @@ export class UserScanner {
    */
   async scanTop100(): Promise<ScanResult> {
     console.log('Scanning top 100 creators...');
-    
+
     const users = await this.rateLimiter.execute(() => this.biliApi.getTop100Creators());
     const newUsers = await this.filterNewUsers(users);
-    
+
     return {
       type: 'top-100',
       users: newUsers,
@@ -85,14 +85,14 @@ export class UserScanner {
    */
   private async filterNewUsers(users: BilibiliUser[]): Promise<BilibiliUser[]> {
     const newUsers: BilibiliUser[] = [];
-    
+
     for (const user of users) {
       const hasMapping = await this.shardManagers.b2y.hasMapping(user.uid);
       if (!hasMapping) {
         newUsers.push(user);
       }
     }
-    
+
     return newUsers;
   }
 
@@ -101,25 +101,25 @@ export class UserScanner {
    */
   async runDailyScan(config: ScannerConfig): Promise<ScanResult[]> {
     const results: ScanResult[] = [];
-    
+
     if (config.coldStart) {
       console.log('Cold start detected - scanning top 100 and must-watch list');
-      
+
       // Cold start: scan top 100 first
       const top100Result = await this.scanTop100();
       results.push(top100Result);
-      
+
       // Then scan must-watch list
       const mustWatchResult = await this.scanMustWatchList();
       results.push(mustWatchResult);
     } else {
       console.log('Regular scan - scanning hot rankings');
-      
+
       // Regular scan: only hot rankings
       const hotResult = await this.scanHotRankings();
       results.push(hotResult);
     }
-    
+
     return results;
   }
 
@@ -129,7 +129,7 @@ export class UserScanner {
   deduplicateUsers(results: ScanResult[]): BilibiliUser[] {
     const seenUids = new Set<string>();
     const uniqueUsers: BilibiliUser[] = [];
-    
+
     for (const result of results) {
       for (const user of result.users) {
         if (!seenUids.has(user.uid)) {
@@ -138,7 +138,7 @@ export class UserScanner {
         }
       }
     }
-    
+
     return uniqueUsers;
   }
 }
@@ -150,23 +150,23 @@ export async function main() {
   const sessdata = process.env['BILIBILI_SESSDATA'];
   const biliApi = new BilibiliAPI(sessdata);
   const scanner = new UserScanner(biliApi);
-  
+
   // Check if cold start
   const coldStart = await scanner.isColdStart();
-  
+
   const config: ScannerConfig = {
     coldStart,
     maxUsers: 100,
     delayMs: 1000,
   };
-  
+
   console.log(`Running scanner (cold start: ${coldStart})`);
-  
+
   const results = await scanner.runDailyScan(config);
   const uniqueUsers = scanner.deduplicateUsers(results);
-  
+
   console.log(`Scanned ${uniqueUsers.length} unique new users`);
-  
+
   // Output results for GitHub Actions
   const output = {
     coldStart,
@@ -177,10 +177,10 @@ export async function main() {
       follower: u.follower,
     })),
   };
-  
+
   // Write to file for next workflow step
   await Bun.write('./scan-results.json', JSON.stringify(output, null, 2));
-  
+
   console.log('Scan complete. Results written to scan-results.json');
 }
 

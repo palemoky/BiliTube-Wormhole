@@ -21,7 +21,7 @@ export async function main() {
   }
 
   const users = JSON.parse(usersJson);
-  
+
   const biliApi = new BilibiliAPI(sessdata);
   const ytApi = new YouTubeAPI(youtubeApiKey);
   const verifier = new UserVerifier(biliApi, ytApi);
@@ -74,7 +74,9 @@ export async function main() {
 
       // Save mapping if successful
       if (result.success && result.mapping) {
-        console.log(`✅ Verified: ${result.mapping.bilibiliUsername} -> ${result.mapping.youtubeChannelName} (Level ${result.level})`);
+        console.log(
+          `✅ Verified: ${result.mapping.bilibiliUsername} -> ${result.mapping.youtubeChannelName} (Level ${result.level})`
+        );
 
         // Write to both b2y and y2b shards
         await shardManagers.b2y.writeMapping(user.uid, result.mapping);

@@ -1,4 +1,9 @@
-import type { BilibiliUser, YouTubeChannel, VerificationResult, VerificationMetadata } from '../../types';
+import type {
+  BilibiliUser,
+  YouTubeChannel,
+  VerificationResult,
+  VerificationMetadata,
+} from '../../types';
 import { BilibiliAPI } from '../api/bilibili';
 import { YouTubeAPI } from '../api/youtube';
 
@@ -28,13 +33,15 @@ function stringSimilarity(str1: string, str2: string): number {
       const prevCell = currRow?.[j - 1];
       const diagCell = prevRow?.[j - 1];
       const prevRowCell = prevRow?.[j];
-      
-      if (currRow && prevRow && prevCell !== undefined && diagCell !== undefined && prevRowCell !== undefined) {
-        currRow[j] = Math.min(
-          prevRowCell + 1,
-          prevCell + 1,
-          diagCell + cost
-        );
+
+      if (
+        currRow &&
+        prevRow &&
+        prevCell !== undefined &&
+        diagCell !== undefined &&
+        prevRowCell !== undefined
+      ) {
+        currRow[j] = Math.min(prevRowCell + 1, prevCell + 1, diagCell + cost);
       }
     }
   }
@@ -42,7 +49,7 @@ function stringSimilarity(str1: string, str2: string): number {
   const lastRow = matrix[len1];
   const distance = lastRow?.[len2];
   if (distance === undefined) return 0;
-  
+
   const maxLen = Math.max(len1, len2);
   return 1 - distance / maxLen;
 }
@@ -60,29 +67,25 @@ function normalizeUsername(username: string): string {
 /**
  * Check if bio contains cross-platform link
  */
-function checkBioMatch(biliSign: string, ytDescription: string, biliUid: string, ytChannelId: string): boolean {
+function checkBioMatch(
+  biliSign: string,
+  ytDescription: string,
+  biliUid: string,
+  ytChannelId: string
+): boolean {
   const biliLower = biliSign.toLowerCase();
   const ytLower = ytDescription.toLowerCase();
-  
+
   // Check if Bilibili bio mentions YouTube
-  const ytPatterns = [
-    ytChannelId.toLowerCase(),
-    'youtube.com',
-    'youtu.be',
-  ];
-  
+  const ytPatterns = [ytChannelId.toLowerCase(), 'youtube.com', 'youtu.be'];
+
   const biliMentionsYt = ytPatterns.some(pattern => biliLower.includes(pattern));
-  
+
   // Check if YouTube description mentions Bilibili
-  const biliPatterns = [
-    biliUid,
-    'bilibili.com',
-    'b站',
-    'b站空间',
-  ];
-  
+  const biliPatterns = [biliUid, 'bilibili.com', 'b站', 'b站空间'];
+
   const ytMentionsBili = biliPatterns.some(pattern => ytLower.includes(pattern));
-  
+
   return biliMentionsYt || ytMentionsBili;
 }
 
@@ -109,7 +112,9 @@ export class UserVerifier {
 
       const metadata: VerificationMetadata = {
         bilibiliFollowers: biliUser.follower,
-        ...(ytChannel.subscriberCount !== undefined && { youtubeSubscribers: ytChannel.subscriberCount }),
+        ...(ytChannel.subscriberCount !== undefined && {
+          youtubeSubscribers: ytChannel.subscriberCount,
+        }),
       };
 
       // Level 1: YouTube verified + name match

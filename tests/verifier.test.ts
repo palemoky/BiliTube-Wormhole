@@ -5,14 +5,16 @@ import type { BilibiliUser, YouTubeChannel } from '../types';
 describe('UserVerifier', () => {
   // Mock API clients
   const mockBiliApi = {
-    getUserInfo: mock(async (uid: string): Promise<BilibiliUser> => ({
-      uid,
-      name: 'TestUser',
-      face: 'https://example.com/avatar.jpg',
-      sign: 'Test bio',
-      follower: 10000,
-      level: 6,
-    })),
+    getUserInfo: mock(
+      async (uid: string): Promise<BilibiliUser> => ({
+        uid,
+        name: 'TestUser',
+        face: 'https://example.com/avatar.jpg',
+        sign: 'Test bio',
+        follower: 10000,
+        level: 6,
+      })
+    ),
     getUserVideos: mock(async () => [
       {
         bvid: 'BV1',
@@ -30,20 +32,22 @@ describe('UserVerifier', () => {
   } as any;
 
   const mockYtApi = {
-    getChannel: mock(async (id: string): Promise<YouTubeChannel> => ({
-      id,
-      title: 'Test Channel',
-      description: 'Test description',
-      customUrl: '@testchannel',
-      thumbnails: {
-        default: 'thumb-default.jpg',
-        medium: 'thumb-medium.jpg',
-        high: 'thumb-high.jpg',
-      },
-      subscriberCount: 5000,
-      videoCount: 100,
-      verified: false,
-    })),
+    getChannel: mock(
+      async (id: string): Promise<YouTubeChannel> => ({
+        id,
+        title: 'Test Channel',
+        description: 'Test description',
+        customUrl: '@testchannel',
+        thumbnails: {
+          default: 'thumb-default.jpg',
+          medium: 'thumb-medium.jpg',
+          high: 'thumb-high.jpg',
+        },
+        subscriberCount: 5000,
+        videoCount: 100,
+        verified: false,
+      })
+    ),
     getChannelVideos: mock(async () => [
       {
         id: 'vid1',
@@ -196,15 +200,78 @@ describe('UserVerifier', () => {
       });
 
       mockBiliApi.getUserVideos.mockResolvedValueOnce([
-        { bvid: 'BV1', aid: 1, title: 'My First Video', pic: '', author: 'TestUser', mid: '123456', created: 0, length: '10:00', play: 1000, danmaku: 100 },
-        { bvid: 'BV2', aid: 2, title: 'Second Video', pic: '', author: 'TestUser', mid: '123456', created: 0, length: '10:00', play: 1000, danmaku: 100 },
-        { bvid: 'BV3', aid: 3, title: 'Third Video', pic: '', author: 'TestUser', mid: '123456', created: 0, length: '10:00', play: 1000, danmaku: 100 },
+        {
+          bvid: 'BV1',
+          aid: 1,
+          title: 'My First Video',
+          pic: '',
+          author: 'TestUser',
+          mid: '123456',
+          created: 0,
+          length: '10:00',
+          play: 1000,
+          danmaku: 100,
+        },
+        {
+          bvid: 'BV2',
+          aid: 2,
+          title: 'Second Video',
+          pic: '',
+          author: 'TestUser',
+          mid: '123456',
+          created: 0,
+          length: '10:00',
+          play: 1000,
+          danmaku: 100,
+        },
+        {
+          bvid: 'BV3',
+          aid: 3,
+          title: 'Third Video',
+          pic: '',
+          author: 'TestUser',
+          mid: '123456',
+          created: 0,
+          length: '10:00',
+          play: 1000,
+          danmaku: 100,
+        },
       ]);
 
       mockYtApi.getChannelVideos.mockResolvedValueOnce([
-        { id: 'v1', title: 'My First Video', description: '', channelId: 'UCtest', channelTitle: 'TestUser', publishedAt: '2024-01-01T00:00:00Z', thumbnails: { default: '', medium: '', high: '' }, duration: 'PT10M', viewCount: 1000 },
-        { id: 'v2', title: 'Second Video', description: '', channelId: 'UCtest', channelTitle: 'TestUser', publishedAt: '2024-01-01T00:00:00Z', thumbnails: { default: '', medium: '', high: '' }, duration: 'PT10M', viewCount: 1000 },
-        { id: 'v3', title: 'Third Video', description: '', channelId: 'UCtest', channelTitle: 'TestUser', publishedAt: '2024-01-01T00:00:00Z', thumbnails: { default: '', medium: '', high: '' }, duration: 'PT10M', viewCount: 1000 },
+        {
+          id: 'v1',
+          title: 'My First Video',
+          description: '',
+          channelId: 'UCtest',
+          channelTitle: 'TestUser',
+          publishedAt: '2024-01-01T00:00:00Z',
+          thumbnails: { default: '', medium: '', high: '' },
+          duration: 'PT10M',
+          viewCount: 1000,
+        },
+        {
+          id: 'v2',
+          title: 'Second Video',
+          description: '',
+          channelId: 'UCtest',
+          channelTitle: 'TestUser',
+          publishedAt: '2024-01-01T00:00:00Z',
+          thumbnails: { default: '', medium: '', high: '' },
+          duration: 'PT10M',
+          viewCount: 1000,
+        },
+        {
+          id: 'v3',
+          title: 'Third Video',
+          description: '',
+          channelId: 'UCtest',
+          channelTitle: 'TestUser',
+          publishedAt: '2024-01-01T00:00:00Z',
+          thumbnails: { default: '', medium: '', high: '' },
+          duration: 'PT10M',
+          viewCount: 1000,
+        },
       ]);
 
       const result = await verifier.verify('123456', 'UCtest');
@@ -241,11 +308,32 @@ describe('UserVerifier', () => {
       });
 
       mockBiliApi.getUserVideos.mockResolvedValueOnce([
-        { bvid: 'BV1', aid: 1, title: 'Unrelated Video', pic: '', author: 'TestUser', mid: '123456', created: 0, length: '10:00', play: 1000, danmaku: 100 },
+        {
+          bvid: 'BV1',
+          aid: 1,
+          title: 'Unrelated Video',
+          pic: '',
+          author: 'TestUser',
+          mid: '123456',
+          created: 0,
+          length: '10:00',
+          play: 1000,
+          danmaku: 100,
+        },
       ]);
 
       mockYtApi.getChannelVideos.mockResolvedValueOnce([
-        { id: 'v1', title: 'Different Content', description: '', channelId: 'UCtest', channelTitle: 'Different', publishedAt: '2024-01-01T00:00:00Z', thumbnails: { default: '', medium: '', high: '' }, duration: 'PT10M', viewCount: 1000 },
+        {
+          id: 'v1',
+          title: 'Different Content',
+          description: '',
+          channelId: 'UCtest',
+          channelTitle: 'Different',
+          publishedAt: '2024-01-01T00:00:00Z',
+          thumbnails: { default: '', medium: '', high: '' },
+          duration: 'PT10M',
+          viewCount: 1000,
+        },
       ]);
 
       const result = await verifier.verify('123456', 'UCtest');

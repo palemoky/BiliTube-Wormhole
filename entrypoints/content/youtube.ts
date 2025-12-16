@@ -31,7 +31,7 @@ export default defineContentScript({
     // Get current video ID
     function getVideoId(): string | null {
       const match = window.location.href.match(/[?&]v=([^&]+)/);
-      return (match && match[1]) ? match[1] : null;
+      return match && match[1] ? match[1] : null;
     }
 
     // Create Bilibili logo button
@@ -112,15 +112,20 @@ export default defineContentScript({
 
     // Render danmaku item (currently unused - placeholder for future implementation)
     // @ts-expect-error - Function will be used when danmaku rendering is implemented
-    function _renderDanmaku(danmaku: BilibiliDanmaku, container: HTMLElement, _videoWidth: number, videoHeight: number) {
+    function _renderDanmaku(
+      danmaku: BilibiliDanmaku,
+      container: HTMLElement,
+      _videoWidth: number,
+      videoHeight: number
+    ) {
       const item = document.createElement('div');
       item.className = 'bilitube-danmaku-item';
       item.textContent = danmaku.content;
-      
+
       // Bilibili-style danmaku
       const fontSize = danmaku.size || 25;
       const color = `#${danmaku.color.toString(16).padStart(6, '0')}`;
-      
+
       item.style.cssText = `
         position: absolute;
         white-space: nowrap;
@@ -128,7 +133,7 @@ export default defineContentScript({
         color: ${color};
         font-family: "Microsoft YaHei", "SimHei", sans-serif;
         font-weight: bold;
-        text-shadow: 
+        text-shadow:
           1px 0 1px #000,
           0 1px 1px #000,
           0 -1px 1px #000,
@@ -196,7 +201,7 @@ export default defineContentScript({
         const mapping = await mappingClient.getMappingByYouTubeId(channelId);
         if (mapping) {
           console.log('Found Bilibili mapping:', mapping);
-          
+
           // Remove existing logo if any
           const existing = document.querySelector('.bilitube-bilibili-link');
           if (existing) {

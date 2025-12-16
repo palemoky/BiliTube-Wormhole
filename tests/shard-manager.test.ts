@@ -45,7 +45,7 @@ describe('ShardManager', () => {
     test('should generate correct shard path', () => {
       const uid = '123456';
       const path = shardManager.getShardPath(uid);
-      
+
       // Should be in format: ab/cd/abcdef12.json
       const parts = path.split('/');
       expect(parts).toHaveLength(3);
@@ -114,7 +114,7 @@ describe('ShardManager', () => {
 
       await shardManager.writeMapping(uid, mapping1);
       await shardManager.writeMapping(uid, mapping2);
-      
+
       const retrieved = await shardManager.readMapping(uid);
       expect(retrieved?.bilibiliUsername).toBe('User2');
     });
@@ -141,7 +141,7 @@ describe('ShardManager', () => {
       expect(exists1).toBe(true);
 
       await shardManager.deleteMapping(uid);
-      
+
       // After deletion, file should be empty or not exist
       const retrieved = await shardManager.readMapping(uid);
       expect(retrieved).toBeNull();
@@ -204,7 +204,7 @@ describe('ShardManager', () => {
       }
 
       const index = await shardManager.buildIndex();
-      
+
       // Index should have entries for both directions
       expect(Object.keys(index).length).toBeGreaterThanOrEqual(3);
       expect(index['111']).toBeDefined();
@@ -251,7 +251,7 @@ describe('ShardManager', () => {
 
       expect(await shardManager.hasMapping('111')).toBe(true);
       expect(await shardManager.hasMapping('222')).toBe(true);
-      
+
       const mapping1 = await shardManager.readMapping('111');
       expect(mapping1?.bilibiliUsername).toBe('User1');
     });

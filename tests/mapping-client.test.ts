@@ -12,25 +12,31 @@ describe('MappingClient', () => {
       global.fetch = (async (url: string | URL | Request) => {
         fetchCallCount++;
         const urlStr = url.toString();
-        
+
         if (urlStr.includes('index.json')) {
-          return new Response(JSON.stringify({
-            '123456': '12/34/12345678.json',
-          }), { status: 200 });
+          return new Response(
+            JSON.stringify({
+              '123456': '12/34/12345678.json',
+            }),
+            { status: 200 }
+          );
         }
-        
-        return new Response(JSON.stringify({
-          bilibiliUid: '123456',
-          bilibiliUsername: 'TestUser',
-          bilibiliAvatar: 'avatar.jpg',
-          youtubeChannelId: 'UCtest',
-          youtubeChannelName: 'Test',
-          youtubeAvatar: 'yt.jpg',
-          verificationLevel: 1,
-          verifiedAt: '2024-01-01T00:00:00.000Z',
-          verifiedBy: 'auto',
-          metadata: {},
-        }), { status: 200 });
+
+        return new Response(
+          JSON.stringify({
+            bilibiliUid: '123456',
+            bilibiliUsername: 'TestUser',
+            bilibiliAvatar: 'avatar.jpg',
+            youtubeChannelId: 'UCtest',
+            youtubeChannelName: 'Test',
+            youtubeAvatar: 'yt.jpg',
+            verificationLevel: 1,
+            verifiedAt: '2024-01-01T00:00:00.000Z',
+            verifiedBy: 'auto',
+            metadata: {},
+          }),
+          { status: 200 }
+        );
       }) as typeof fetch;
 
       // First call should fetch
@@ -71,25 +77,31 @@ describe('MappingClient', () => {
         if (urlStr.includes('cdn.jsdelivr.net')) {
           cdnCalled = true;
         }
-        
+
         if (urlStr.includes('index.json')) {
-          return new Response(JSON.stringify({
-            '123456': '12/34/12345678.json',
-          }), { status: 200 });
+          return new Response(
+            JSON.stringify({
+              '123456': '12/34/12345678.json',
+            }),
+            { status: 200 }
+          );
         }
-        
-        return new Response(JSON.stringify({
-          bilibiliUid: '123456',
-          bilibiliUsername: 'TestUser',
-          bilibiliAvatar: 'avatar.jpg',
-          youtubeChannelId: 'UCtest',
-          youtubeChannelName: 'Test',
-          youtubeAvatar: 'yt.jpg',
-          verificationLevel: 1,
-          verifiedAt: '2024-01-01T00:00:00.000Z',
-          verifiedBy: 'auto',
-          metadata: {},
-        }), { status: 200 });
+
+        return new Response(
+          JSON.stringify({
+            bilibiliUid: '123456',
+            bilibiliUsername: 'TestUser',
+            bilibiliAvatar: 'avatar.jpg',
+            youtubeChannelId: 'UCtest',
+            youtubeChannelName: 'Test',
+            youtubeAvatar: 'yt.jpg',
+            verificationLevel: 1,
+            verifiedAt: '2024-01-01T00:00:00.000Z',
+            verifiedBy: 'auto',
+            metadata: {},
+          }),
+          { status: 200 }
+        );
       }) as typeof fetch;
 
       await client.getMappingByBiliUid('123456');
@@ -154,25 +166,31 @@ describe('MappingClient', () => {
       global.fetch = (async (url: string | URL | Request) => {
         fetchCount++;
         const urlStr = url.toString();
-        
+
         if (urlStr.includes('index.json')) {
-          return new Response(JSON.stringify({
-            '123456': '12/34/12345678.json',
-          }), { status: 200 });
+          return new Response(
+            JSON.stringify({
+              '123456': '12/34/12345678.json',
+            }),
+            { status: 200 }
+          );
         }
-        
-        return new Response(JSON.stringify({
-          bilibiliUid: '123456',
-          bilibiliUsername: 'TestUser',
-          bilibiliAvatar: 'avatar.jpg',
-          youtubeChannelId: 'UCtest',
-          youtubeChannelName: 'Test',
-          youtubeAvatar: 'yt.jpg',
-          verificationLevel: 1,
-          verifiedAt: '2024-01-01T00:00:00.000Z',
-          verifiedBy: 'auto',
-          metadata: {},
-        }), { status: 200 });
+
+        return new Response(
+          JSON.stringify({
+            bilibiliUid: '123456',
+            bilibiliUsername: 'TestUser',
+            bilibiliAvatar: 'avatar.jpg',
+            youtubeChannelId: 'UCtest',
+            youtubeChannelName: 'Test',
+            youtubeAvatar: 'yt.jpg',
+            verificationLevel: 1,
+            verifiedAt: '2024-01-01T00:00:00.000Z',
+            verifiedBy: 'auto',
+            metadata: {},
+          }),
+          { status: 200 }
+        );
       }) as typeof fetch;
 
       // First fetch
