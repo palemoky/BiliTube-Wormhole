@@ -1,0 +1,74 @@
+# Pre-commit hooks configuration
+# See https://pre-commit.com for more information
+
+repos:
+  # Built-in hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      # File checks
+      - id: check-added-large-files
+        args: [--maxkb=1000]
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: destroyed-symlinks
+
+      # Syntax checks
+      - id: check-json
+      - id: check-yaml
+      - id: check-toml
+
+      # Code quality
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+      - id: mixed-line-ending
+        args: [--fix=lf]
+
+      # Security
+      - id: detect-private-key
+
+  # Local hooks (using project dependencies)
+  - repo: local
+    hooks:
+      # Prettier - Code formatting
+      - id: prettier
+        name: Prettier
+        entry: bun run format
+        language: system
+        types_or: [javascript, jsx, ts, tsx, json, yaml, markdown]
+        pass_filenames: false
+
+      # ESLint - Linting
+      - id: eslint
+        name: ESLint
+        entry: bun run lint --fix
+        language: system
+        types: [ts, tsx]
+        pass_filenames: false
+
+      # TypeScript - Type checking
+      - id: typescript-check
+        name: TypeScript Type Check
+        entry: bun run type-check
+        language: system
+        types: [ts, tsx]
+        pass_filenames: false
+
+      # Tests - Run on push only
+      - id: test-run
+        name: Run Tests
+        entry: bun run test:run
+        language: system
+        types: [ts, tsx]
+        pass_filenames: false
+        stages: [push] # Only run on push, not commit
+
+# Global settings
+default_language_version:
+  node: system
+
+# Performance settings
+fail_fast: false
+minimum_pre_commit_version: '3.0.0'

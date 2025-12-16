@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+bun.lock
+
+# Build outputs
+dist/
+.wxt/
+.output/
+*.zip
+
+# TypeScript
+*.tsbuildinfo
+
+# Data files
+data/
+
+# Test artifacts
+test-data/
+coverage/
+.nyc_output/
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Worker
+worker/.wrangler/
+worker/dist/

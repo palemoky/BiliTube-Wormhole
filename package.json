@@ -17,6 +17,7 @@
     "lint": "eslint . --ext .ts,.tsx",
     "format": "prettier --write \"**/*.{ts,tsx,json,md}\"",
     "test": "bun test",
+    "test:run": "bun test --run",
     "workflow:scan": "bun run src/workflows/scanner.ts",
     "workflow:verify": "bun run src/workflows/verify-runner.ts",
     "worker:dev": "wrangler dev worker/src/index.ts",
