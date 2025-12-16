@@ -1,7 +1,6 @@
 import { defineConfig } from 'wxt';
 
 export default defineConfig({
-  extensionApi: 'chrome',
   modules: ['@wxt-dev/module-react'],
   manifest: {
     name: 'BiliTube Wormhole',
@@ -22,7 +21,7 @@ export default defineConfig({
       },
     ],
   },
-  runner: {
+  webExt: {
     chromiumArgs: ['--user-data-dir=./.wxt/chrome-data'],
     firefoxProfile: 'wxt-dev-profile',
   },

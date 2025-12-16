@@ -8,6 +8,7 @@ export default tseslint.config(
       '**/node_modules/**',
       '**/dist/**',
       '**/.wxt/**',
+      '**/.output/**',
       '**/coverage/**',
       '**/.tsbuildinfo',
       '**/bun.lock',
@@ -32,13 +33,15 @@ export default tseslint.config(
           caughtErrorsIgnorePattern: '^_',
         },
       ],
-      '@typescript-eslint/no-explicit-any': 'warn',
+      // Allow 'any' in API code where external data types are unknown
+      '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
-      '@typescript-eslint/no-non-null-assertion': 'warn',
+      // Allow non-null assertions where we have runtime guarantees
+      '@typescript-eslint/no-non-null-assertion': 'off',
 
       // General rules
-      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'no-console': 'off', // Allow console in Node.js scripts
       'prefer-const': 'error',
       'no-var': 'error',
     },
@@ -48,7 +51,7 @@ export default tseslint.config(
   {
     files: ['entrypoints/**/*.ts', 'entrypoints/**/*.tsx'],
     rules: {
-      // Allow console in content scripts and background scripts
+      // Content scripts and background scripts need console for debugging
       'no-console': 'off',
     },
   },
