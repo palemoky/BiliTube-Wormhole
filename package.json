@@ -1,0 +1,58 @@
+{
+  "name": "bilitube-wormhole",
+  "version": "0.1.0",
+  "description": "A serverless bilibili-youtube danmaku bridge with automated user mapping",
+  "type": "module",
+  "scripts": {
+    "dev": "wxt",
+    "dev:firefox": "wxt -b firefox",
+    "dev:edge": "wxt -b edge",
+    "build": "wxt build",
+    "build:firefox": "wxt build -b firefox",
+    "build:edge": "wxt build -b edge",
+    "build:all": "bun run build && bun run build:firefox && bun run build:edge",
+    "zip": "wxt zip",
+    "zip:all": "wxt zip && wxt zip -b firefox && wxt zip -b edge",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint . --ext .ts,.tsx",
+    "format": "prettier --write \"**/*.{ts,tsx,json,md}\"",
+    "test": "bun test",
+    "workflow:scan": "bun run src/workflows/scanner.ts",
+    "workflow:verify": "bun run src/workflows/verify-runner.ts",
+    "worker:dev": "wrangler dev worker/src/index.ts",
+    "worker:deploy": "wrangler deploy worker/src/index.ts"
+  },
+  "dependencies": {
+    "@octokit/rest": "^21.0.2",
+    "hono": "^4.6.14",
+    "wxt": "^0.19.17",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.1.13",
+    "@types/chrome": "^0.0.278",
+    "@types/node": "^22.10.2",
+    "@typescript-eslint/eslint-plugin": "^8.18.1",
+    "@typescript-eslint/parser": "^8.18.1",
+    "eslint": "^9.17.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2",
+    "wrangler": "^3.96.0"
+  },
+  "engines": {
+    "bun": ">=1.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/palemoky/BiliTube-Wormhole.git"
+  },
+  "keywords": [
+    "bilibili",
+    "youtube",
+    "danmaku",
+    "browser-extension",
+    "serverless"
+  ],
+  "author": "palemoky",
+  "license": "MIT"
+}

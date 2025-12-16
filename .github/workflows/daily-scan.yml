@@ -1,0 +1,65 @@
+name: Daily User Scan
+
+on:
+  schedule:
+    # Run at 00:00 UTC daily
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+    # Allow manual trigger
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Run scanner
+        env:
+          # Optional: Only needed for WBI-authenticated endpoints or to avoid rate limits
+          BILIBILI_SESSDATA: ${{ secrets.BILIBILI_SESSDATA }}
+        run: bun run workflow:scan
+
+      - name: Upload scan results
+        uses: actions/upload-artifact@v4
+        with:
+          name: scan-results
+          path: scan-results.json
+          retention-days: 7
+
+      - name: Trigger verification workflow
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const results = JSON.parse(fs.readFileSync('scan-results.json', 'utf8'));
+
+            if (results.uniqueUsers.length > 0) {
+              console.log(`Triggering verification for ${results.uniqueUsers.length} users`);
+              
+              await github.rest.actions.createWorkflowDispatch({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                workflow_id: 'verify-mappings.yml',
+                ref: 'main',
+                inputs: {
+                  users: JSON.stringify(results.uniqueUsers.slice(0, 50)) // Limit to 50 per run
+                }
+              });
+            } else {
+              console.log('No new users to verify');
+            }
