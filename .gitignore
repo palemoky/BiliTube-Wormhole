@@ -19,8 +19,9 @@ dist/
 .env.*.local
 
 # IDE
-.vscode/settings.json
-.vscode/extensions.json
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
 .idea/
 *.swp
 *.swo
