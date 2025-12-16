@@ -139,16 +139,73 @@ bun run worker:deploy
 ## Architecture
 
 ```mermaid
-graph TB
-    A[Browser Extension] -->|Fetch Mappings| B[jsDelivr CDN]
-    B -->|Serve JSON| A
-    C[User Submission] -->|POST| D[Cloudflare Worker]
-    D -->|Create Issue| E[GitHub]
-    E -->|Trigger| F[GitHub Actions]
-    F -->|Scan & Verify| G[Bilibili API]
-    F -->|Verify| H[YouTube API]
-    F -->|Update| I[Git Repository]
-    I -->|Publish| B
+graph LR
+    %% ====================
+    %% Client Side
+    %% ====================
+    subgraph Client_Side[Client Side]
+        User((User))
+        Ext[Browser Extension]
+    end
+
+    %% ====================
+    %% Serverless Edge
+    %% ====================
+    subgraph Serverless_Edge[Serverless Edge]
+        CF[Cloudflare Worker]
+    end
+
+    %% ====================
+    %% GitHub Platform
+    %% ====================
+    subgraph GitHub_Ecosystem[GitHub Ecosystem]
+        Issues[GitHub Issues]
+        Action[GitHub Actions]
+        Repo[GitHub Repository]
+    end
+
+    %% ====================
+    %% External Services
+    %% ====================
+    subgraph External_Services[External Services]
+        BiliAPI[Bilibili API]
+        YtAPI[YouTube API]
+        CDN[jsDelivr CDN]
+    end
+
+    %% ====================
+    %% Submission Flow
+    %% ====================
+    User -->|Submit Mapping| CF
+    CF -->|Create Issue| Issues
+    Issues -->|Trigger Workflow| Action
+
+    %% ====================
+    %% Verification Flow
+    %% ====================
+    Action -->|Validate Source| BiliAPI
+    Action -->|Validate Source| YtAPI
+
+    %% ====================
+    %% Result Handling
+    %% ====================
+    Action -->|Verified → Update JSON| Repo
+    Action -->|Verified / Invalid → Comment & Close| Issues
+
+    %% ====================
+    %% Distribution Flow
+    %% ====================
+    Repo -.->|CDN Sync| CDN
+    Ext -->|Fetch Mapping| CDN
+    CDN -->|Serve JSON| Ext
+
+    %% ====================
+    %% Styling
+    %% ====================
+    style CF fill:#f96,stroke:#333
+    style Action fill:#69c,stroke:#333,color:#fff
+    style Repo fill:#9cf,stroke:#333
+    style CDN fill:#ff9,stroke:#333
 ```
 
 ### Data Flow
